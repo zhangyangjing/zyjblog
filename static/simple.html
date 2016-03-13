@@ -2,64 +2,30 @@
 <html lang="zh">
     <head>
         <meta charset="utf-8" />
-        <title>Simple example - Editor.md examples</title>
+        <title>Editor</title>
         <link rel="stylesheet" href="lib/editor.md/css/editormd.min.css" />
     </head>
     <body>
-        <div id="layout">
-            <header>
-                <h1>Simple example</h1>
-            </header>
-            <div id="test-editormd">
-                <textarea style="display:none;">[TOC]
-
-#### Disabled options
-
-- TeX (Based on KaTeX);
-- Emoji;
-- Task lists;
-- HTML tags decode;
-- Flowchart and Sequence Diagram;
-
-#### Editor.md directory
-
-    editor.md/
-            lib/
-            css/
-            scss/
-            tests/
-            fonts/
-            images/
-            plugins/
-            examples/
-            languages/
-            editormd.js
-            ...
-
-</textarea>
-            </div>
-        </div>
+        <div id="test-editormd"></div>
+        <!--<script src="js/require.min.js"></script>-->
         <script src="js/jquery.min.js"></script>
         <script src="lib/editor.md/editormd.min.js"></script>
         <script type="text/javascript">
-			var testEditor;
-
             $(function() {
-                testEditor = editormd("test-editormd", {
+                editor = editormd("test-editormd", {
                     width   : "90%",
                     height  : 640,
-                    path    : "lib/editor.md/lib/"
+                    path    : "lib/editor.md/lib/",
+                    toolbar : true,
+                    lineNumbers: false
                 });
-                
-                /*
-                // or
-                testEditor = editormd({
-                    id      : "test-editormd",
-                    width   : "90%",
-                    height  : 640,
-                    path    : "../lib/"
-                });
-                */
+                document.onkeydown = function(e) {
+                    if ((e.metaKey || e.ctrlKey) && 83 == e.which) {
+                        e.preventDefault();
+                        console.log("save document!");
+                    }
+                };
+                editor.fullscreen(); // bug
             });
         </script>
     </body>
