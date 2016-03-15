@@ -9,7 +9,7 @@
         <div id="test-editormd"></div>
         <!--<script src="js/require.min.js"></script>-->
         <script src="js/jquery.min.js"></script>
-        <script src="lib/editor.md/editormd.min.js"></script>
+        <script src="lib/editor.md/editormd.js"></script>
         <script type="text/javascript">
             $(function() {
                 editor = editormd("test-editormd", {
@@ -17,7 +17,15 @@
                     height  : 640,
                     path    : "lib/editor.md/lib/",
                     toolbar : true,
-                    lineNumbers: false
+                    lineNumbers: false,
+                    onload  : function() {
+                        this.cm.on("drop", function(data, e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            console.log("save file!");
+                            return false;
+                        });
+                    }
                 });
                 document.onkeydown = function(e) {
                     if ((e.metaKey || e.ctrlKey) && 83 == e.which) {
