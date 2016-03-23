@@ -42,9 +42,10 @@ class ArticleHandler(BaseHandler):
 
     # data, time, title, tags, address
     def _update_data(self, data, article_data):
+        self.md.convert(article_data)
         data['data'] = article_data
         data['time'] = datetime.now()
-        data['title'] = 'sdf'
+        data['title'] = self.md.title
         data['tags'] = []
         data['address'] = (self.request.headers.get("X-Real-IP") or
                            self.request.remote_ip)

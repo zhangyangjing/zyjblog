@@ -9,6 +9,7 @@ from tornado.escape import url_escape
 import routes
 from uimodule import uimodules
 from libs.jinja import JinjaLoader
+from libs.markdown import Markdown
 
 log = logging.getLogger('Main.BlogServer')
 
@@ -31,6 +32,7 @@ class BlogServer(Application):
             ui_modules=uimodules
         )
 
+        self.md = Markdown()
         self.db = MongoClient(options.mongodb_host)[options.db_name]
         log.info("Connected to database %s:%s ...",
                  options.mongodb_host,

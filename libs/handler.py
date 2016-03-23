@@ -11,6 +11,10 @@ class BaseHandler(RequestHandler):
     def db(self):
         return self.application.db
 
+    @property
+    def md(self):
+        return self.application.md
+
 
 class AuthHandler(BaseHandler):
     @authenticated
