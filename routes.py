@@ -8,11 +8,13 @@ def get(options):
         (r'/static/(.*)', StaticFileHandler, {'path': options.static_dir}),
 
         # page
-        ('/', 'controller.web.index.IndexHandler'),
+        ('/', 'controller.web.articles.ArticlesHandler'),
+        ('/articles', 'controller.web.articles.ArticlesHandler'),
+        ('/articles/([0-9a-z]*)', 'controller.web.articles.ArticlesHandler'),
 
         # service
 
         # ajax
-        ('/api/articles', 'controller.ajax.article.ArticleHandler'),
-        ('/api/articles/(.*)', 'controller.ajax.article.ArticleHandler'),
+        ('/api/articles', 'controller.ajax.articles.ArticlesHandler'),
+        ('/api/articles/(.*)', 'controller.ajax.articles.ArticlesHandler'),
     ]

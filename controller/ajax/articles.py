@@ -19,7 +19,7 @@ from bson.objectid import ObjectId
 from libs.handler import BaseHandler
 
 
-class ArticleHandler(BaseHandler):
+class ArticlesHandler(BaseHandler):
     def get(self):
         self.finish('article get')
 
