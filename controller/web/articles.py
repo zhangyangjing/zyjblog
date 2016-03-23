@@ -12,11 +12,12 @@ class ArticlesHandler(BaseHandler):
             self._get_special(article_id)
 
     def _get_special(self, article_id):
-        aid = ObjectId(article_id)
-        d = self.db.articles.find_one({'_id': aid}, {'data': 1, 'title': 1})
-        html = self.md.convert(d['data'])
-        self.render('article.html', title=d['title'], article=html)
+        article = self.db.articles.find_one({'_id': ObjectId(article_id)},
+                                            {'data': 1, 'title': 1})
+        self.render('article.html',
+                    title=article['title'],
+                    article=self.md.convert(article['data']))
 
     def _get_all(self):
-        d = self.db.articles.find({}, {'_id': 1, 'title': 1})
-        self.render('articles.html', articles=d)
+        articles = self.db.articles.find({}, {'_id': 1, 'title': 1})
+        self.render('articles.html', articles=articles)

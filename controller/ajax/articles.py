@@ -1,34 +1,24 @@
 # -*- coding: utf-8 -*-
 
-'''
-    {
-        _id: sk3kj2kj4,
-        data: "sdfdsf",
-        history: [
-            {
-                data: "df",
-                time: time,
-                ip: "123,34,234,3"
-            }
-        ]
-    }
-'''
-
 from datetime import datetime
 from bson.objectid import ObjectId
 from libs.handler import BaseHandler
+from libs.json_helper import bson_2_json
 
 
 class ArticlesHandler(BaseHandler):
-    def get(self):
-        self.finish('article get')
+    def get(self, article_id=None):
+        if article_id is None:
+            self._get_all()
+        else:
+            self._get_special(article_id)
 
     def post(self):
         data = {'history': []}
         self._update_data(data, self.get_argument('markdown'))
-        article_id = self.db.articles.save(data)
         self.set_status(201)
-        self.write({'article_id': str(article_id)})
+        del data['history']
+        self.finish(bson_2_json(data))
 
     def put(self, article_id):
         data = self.db.articles.find_one({'_id': ObjectId(article_id)})
@@ -39,6 +29,8 @@ class ArticlesHandler(BaseHandler):
         })
         self._update_data(data, self.get_argument('markdown'))
         self.db.articles.save(data)
+        del data['history']
+        self.finish(bson_2_json(data))
 
     # data, time, title, tags, address
     def _update_data(self, data, article_data):
@@ -49,3 +41,12 @@ class ArticlesHandler(BaseHandler):
         data['tags'] = []
         data['address'] = (self.request.headers.get("X-Real-IP") or
                            self.request.remote_ip)
+
+    def _get_special(self, article_id):
+        article = self.db.articles.find_one({'_id': ObjectId(article_id)},
+                                            {'history': 0})
+        self.finish(bson_2_json(article))
+
+    def _get_all(self):
+        articles = self.db.articles.find({}, {'history': 0})
+        self.finish(bson_2_json(articles))

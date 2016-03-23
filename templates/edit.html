@@ -1,26 +1,26 @@
-<!DOCTYPE html>
-<html lang="zh">
-    <head>
-        <meta charset="utf-8" />
-        <title>Editor</title>
-        <link rel="stylesheet" href="lib/editor.md/css/editormd.min.css" />
-    </head>
-    <body>
-        <div id="test-editormd"></div>
+{% extends "base.html" %}
+{% set title = "Edit" %}
+
+{% block head %}
+        <link rel="stylesheet" href="/static/lib/editor.md/css/editormd.min.css" />
+{% endblock %}
+
+{% block content %}
+<div id="test-editormd" article_id="{{ article_id }}"></div>
         <!--<script src="js/require.min.js"></script>-->
-        <script src="js/jquery.min.js"></script>
-        <script src="lib/editor.md/editormd.js"></script>
+        <script src="/static/js/jquery.min.js"></script>
+        <script src="/static/lib/editor.md/editormd.js"></script>
         <script type="text/javascript">
             var updating = false;
-            function updateMarkdown(md) {
+            function updateMarkdown() {
                 if (updating)
                     return;
                 updating = true;
 
                 var markdown = editor.getMarkdown();
-                var markdown_id = $("#test-editormd").attr("article_id");
                 if (!markdown)
                     return;
+                var markdown_id = $("#test-editormd").attr("article_id");
                 if (!markdown_id)
                     postMarkdown(markdown);
                 else
@@ -34,7 +34,7 @@
                     method: "POST",
                     data: {markdown: md},
                 }).done(function(data) {
-                    $("#test-editormd").attr("article_id", data["article_id"]);
+                    $("#test-editormd").attr("article_id", data["_id"]);
                 }).fail(function() {
                     console.log("post fail");
                 }).always(function() {
@@ -57,11 +57,22 @@
                 });
             }
 
+            function fetchMarkdown(mid) {
+                $.get('/api/articles/' + mid, function(data) {
+                    kk = data;
+                    console.log(data["data"]);
+                    console.log(data);
+                    console.log(data.data);
+                    editor.setMarkdown(data["data"]);
+                    //editor.setMarkdown("# sadf\nk;ksjd;;jsadk;s;dfkjsdf;\n;jkj;kjsd;j;as")
+                }); 
+            }
+
             $(function() {
                 editor = editormd("test-editormd", {
                     width   : "90%",
                     height  : 640,
-                    path    : "lib/editor.md/lib/",
+                    path    : "/static/lib/editor.md/lib/",
                     toolbar : true,
                     lineNumbers: false,
                     onload  : function() {
@@ -71,6 +82,11 @@
                             console.log("save file!");
                             return false;
                         });
+
+                        var markdown_id = $("#test-editormd").attr("article_id");
+                        if (markdown_id) {
+                            fetchMarkdown(markdown_id);
+                        }
                     }
                 });
                 document.onkeydown = function(e) {
@@ -82,5 +98,4 @@
                 editor.fullscreen(); // bug
             });
         </script>
-    </body>
-</html>
+{% endblock %}
