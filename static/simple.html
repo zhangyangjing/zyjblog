@@ -11,6 +11,52 @@
         <script src="js/jquery.min.js"></script>
         <script src="lib/editor.md/editormd.js"></script>
         <script type="text/javascript">
+            var updating = false;
+            function updateMarkdown(md) {
+                if (updating)
+                    return;
+                updating = true;
+
+                var markdown = editor.getMarkdown();
+                var markdown_id = $("#test-editormd").attr("article_id");
+                if (!markdown)
+                    return;
+                if (!markdown_id)
+                    postMarkdown(markdown);
+                else
+                    putMarkdown(markdown_id, markdown);
+            }
+
+            function postMarkdown(md) {
+                console.log("postMarkdown");
+                $.ajax({
+                    url: "/api/articles",
+                    method: "POST",
+                    data: {markdown: md},
+                }).done(function(data) {
+                    $("#test-editormd").attr("article_id", data["article_id"]);
+                }).fail(function() {
+                    console.log("post fail");
+                }).always(function() {
+                    updating = false;
+                });
+            }
+
+            function putMarkdown(mid, md) {
+                console.log("putMarkdown");
+                $.ajax({
+                    url: "/api/articles/" + mid,
+                    method: "PUT",
+                    data: {markdown: md},
+                }).done(function(data) {
+
+                }).fail(function() {
+                    console.log("put fail");
+                }).always(function() {
+                    updating = false;
+                });
+            }
+
             $(function() {
                 editor = editormd("test-editormd", {
                     width   : "90%",
@@ -30,7 +76,7 @@
                 document.onkeydown = function(e) {
                     if ((e.metaKey || e.ctrlKey) && 83 == e.which) {
                         e.preventDefault();
-                        console.log("save document!");
+                        updateMarkdown();
                     }
                 };
                 editor.fullscreen(); // bug

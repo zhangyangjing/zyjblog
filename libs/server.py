@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
 import logging
 
 from pymongo import MongoClient
@@ -22,11 +21,11 @@ class BlogServer(Application):
             debug=options.debug)
         loader.env.globals['url_escape'] = url_escape
 
-        app_settings = dict(
+        settings = dict(
             template_loader=loader,
-            static_path=os.path.join(os.path.dirname(__file__), "static"),
+            static_path=options.static_dir,
             cookie_secret=options.cookie_secret,
-            xsrf_cookies=True,
+            xsrf_cookies=False,
             debug=options.debug,
             login_url="/login",
             ui_modules=uimodules
@@ -38,4 +37,4 @@ class BlogServer(Application):
                  options.db_name)
 
         the_routes = routes.get(options)
-        super(BlogServer, self).__init__(the_routes, **app_settings)
+        super(BlogServer, self).__init__(the_routes, **settings)

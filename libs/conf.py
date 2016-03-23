@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from tornado.options import define
 
 
@@ -14,3 +16,5 @@ def define_app_options():
 
     define('log_dir', default='/var/log/zyjblog')
     define('log_level', default=5)
+
+    define('static_dir', default=os.path.join(os.getcwd(), 'static'))

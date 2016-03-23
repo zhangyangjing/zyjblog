@@ -13,9 +13,9 @@ from libs.utils import load_config, setup_log
 
 
 def main():
-    if False == load_config():
+    if not load_config():
         return -1
-    if False == setup_log(options):
+    if not setup_log(options):
         return -1
 
     log = logging.getLogger('Main.server')
