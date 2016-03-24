@@ -9,6 +9,7 @@ def get(options):
 
         # page
         ('/', 'controller.web.articles.ArticlesHandler'),
+        ('/about', 'controller.web.about.AboutHandler'),
         ('/login', 'controller.web.user.LoginHandler'),
         ('/logout', 'controller.web.user.LogoutHandler'),
         ('/articles', 'controller.web.articles.ArticlesHandler'),
