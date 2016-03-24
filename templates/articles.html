@@ -4,7 +4,11 @@
 {% block content %}
         <ul>
         {% for article in articles %}
-            <li><a href="/articles/{{ article._id }}">{{ article.title }}</a></li>
+            <li><a href="/articles/{{ article._id }}">{{ article.title }}</a>
+                {%- if admin -%}
+                    <a href="/articles/{{ article._id }}/edit">edit</a>
+                {%- endif -%}
+            </li>
         {% endfor %}
         </ul>
 {% endblock %}

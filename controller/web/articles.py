@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from bson.objectid import ObjectId
+from tornado.options import options
 from libs.handler import BaseHandler
 
 
@@ -20,4 +21,6 @@ class ArticlesHandler(BaseHandler):
 
     def _get_all(self):
         articles = self.db.articles.find({}, {'_id': 1, 'title': 1})
-        self.render('articles.html', articles=articles)
+        self.render('articles.html',
+                    articles=articles,
+                    admin=options.admin_user == self.current_user)

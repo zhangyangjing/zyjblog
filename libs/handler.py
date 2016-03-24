@@ -3,8 +3,6 @@
 from tornado.web import authenticated
 from tornado.web import RequestHandler
 
-from model import user
-
 
 class BaseHandler(RequestHandler):
     @property
@@ -15,12 +13,6 @@ class BaseHandler(RequestHandler):
     def md(self):
         return self.application.md
 
-
-class AuthHandler(BaseHandler):
-    @authenticated
-    def prepare(self):
-        pass
-
     def set_current_user(self, user_name):
         self.set_secure_cookie('un', user_name)
         self.current_user = None
@@ -30,10 +22,13 @@ class AuthHandler(BaseHandler):
         self.current_user = None
 
     def get_current_user(self):
-        user_name = self.get_secure_cookie('un')
-        if user_name is None:
-            return None
-        return user.get_user(self, user_name)
+        return self.get_secure_cookie('un')
+
+
+class AuthHandler(BaseHandler):
+    @authenticated
+    def prepare(self):
+        pass
 
 
 class ServiceHandler(BaseHandler):

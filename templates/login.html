@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% set title = "Login" %}
+
+{% block content %}
+        {% if alert %}
+        <strong>{{ alert }}</strong>
+        <br>
+        {% endif %}
+        <form action="" method="post">
+            <label for="pswd">Password:</label>
+            <input type="text" id="pswd" name="pswd">
+            <input type="submit" value="Login">
+        </form>
+{% endblock %}
