@@ -4,13 +4,126 @@
         <meta charset="UTF-8">
         <meta name="author" content="Yangjing Zhang">
         <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <style>
+            * {
+                margin: 0px;
+                padding: 0px;
+            }
+
+            header {
+                position: fixed;
+                width: 100%;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                color: #696969;
+                background-color: #ffffff;
+                opacity: .9;
+                border: 1px solid #e3e3e3;
+                border-width: 0 0 1px;
+                font-family: STFangSong, Helvetica, Arial, Vernada, Tahoma, STXihei, "Microsoft YaHei", "Songti SC", SimSun, Heiti, sans-serif;
+            }
+
+            header * {
+                height: 100%;
+                font-size: 18px;
+            }
+
+            header h1 {
+                flex: auto;
+                display: inline-flex;
+                align-items: center;
+                margin-left: 15px
+            }
+
+            header nav {
+                margin-right: 15px;
+            }
+
+            header nav ul {
+                display: flex;
+            }
+
+            header nav ul li {
+                display: inline-block;
+                margin: 0;
+            }
+
+            header nav ul li a {
+                display: inline-flex;
+                align-items: center;
+                padding: 0 5px;
+            }
+
+            header nav ul li.active {
+                padding: 0 8px;
+                background-color: #f3f3f3;
+            }
+
+            main {
+                padding: 80px 0 20px;
+                text-align: center;
+            }
+
+            main a:link, main a:visited {
+                color: #4f8e45;
+                text-decoration: none;
+            }
+
+            main > ul {
+                width: 580px;
+                text-align: left;
+                font-size: 19px;
+                display: inline-block;
+                list-style-type: none;
+                border: 1px solid rgba(0, 0, 0, .13);
+                box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+            }
+
+            main > ul > li {
+                display: flex;
+                line-height: 38px;
+                padding: 0 15px;
+                border: 1px solid rgba(0, 0, 0, .13);
+                border-width: 0 0 1px;
+            }
+
+            main > ul > li > a.title {
+                flex: auto;
+            }
+
+            main > ul > li > a.edit {
+                display: none;
+            }
+
+            main > ul > li:hover {
+                background-color: #f3f3f3;
+            }
+
+            main > ul > li:hover > a.edit {
+                display: inline-flex;
+            }
+        </style>
         {% block head %}
         {% endblock %}
         <title>{{ title  }}</title>
     </head>
 
-    <body class="container" style="max-width:1024px;">
+    <body class="container">
+        <header>
+            <h1>张养静的博客</h1>
+            <nav>
+                <ul>
+                    <li class="active"><a>Blog</a></li>
+                    <li><a>Photos</a></li>
+                    <li><a>Github</a></li>
+                    <li><a>Profile</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
         {% block content %}
         {% endblock %}
+        </main>
     </body>
 </html>
