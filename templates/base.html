@@ -114,10 +114,17 @@
             <h1>张养静的博客</h1>
             <nav>
                 <ul>
-                    <li class="active"><a>Blog</a></li>
-                    <li><a>Photos</a></li>
-                    <li><a>Github</a></li>
-                    <li><a>Profile</a></li>
+                {% set navigation_bar = [
+                    ('/', 'blog', 'Blog'),
+                    ('/', 'photos', 'Photos'),
+                    ('/', 'github', 'Github'),
+                    ('/about', 'about', 'About'),
+                ] -%}
+                {%- set active_page = active_page|default('blog') -%}
+                {%- for href, id, caption in navigation_bar %}
+                    <li{% if id == active_page %} class="active"{% endif
+                    %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+                {% endfor %}
                 </ul>
             </nav>
         </header>
