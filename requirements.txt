@@ -2,3 +2,4 @@ tornado
 pymongo
 jinja2
 markdown2
+pygments

@@ -32,7 +32,7 @@ class BlogServer(Application):
             ui_modules=uimodules
         )
 
-        self.md = Markdown()
+        self.md = Markdown(extras=["fenced-code-blocks"])
         self.db = MongoClient(options.mongodb_host)[options.db_name]
         log.info("Connected to database %s:%s ...",
                  options.mongodb_host,
