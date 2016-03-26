@@ -36,6 +36,13 @@
                 margin-left: 15px
             }
 
+            header h1 a {
+                color: inherit;
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+            }
+
             header nav {
                 margin-right: 15px;
             }
@@ -144,7 +151,7 @@
 
     <body class="container">
         <header>
-            <h1>张养静的博客</h1>
+            <h1><a href="/">张养静的博客</a></h1>
             <nav>
                 <ul>
                 {% set navigation_bar = [
