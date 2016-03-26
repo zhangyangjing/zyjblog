@@ -62,46 +62,6 @@
 
             main {
                 padding: 80px 0 20px;
-                text-align: center;
-            }
-
-            main a:link, main a:visited {
-                color: #4f8e45;
-                text-decoration: none;
-            }
-
-            main > ul {
-                width: 580px;
-                text-align: left;
-                font-size: 19px;
-                display: inline-block;
-                list-style-type: none;
-                border: 1px solid rgba(0, 0, 0, .13);
-                box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
-            }
-
-            main > ul > li {
-                display: flex;
-                line-height: 38px;
-                padding: 0 15px;
-                border: 1px solid rgba(0, 0, 0, .13);
-                border-width: 0 0 1px;
-            }
-
-            main > ul > li > a.title {
-                flex: auto;
-            }
-
-            main > ul > li > a.edit {
-                display: none;
-            }
-
-            main > ul > li:hover {
-                background-color: #f3f3f3;
-            }
-
-            main > ul > li:hover > a.edit {
-                display: inline-flex;
             }
 
             .codehilite {
@@ -201,7 +161,7 @@
                 </ul>
             </nav>
         </header>
-        <main>
+        <main class={{ main_class }}>
         {% block content %}
         {% endblock %}
         </main>

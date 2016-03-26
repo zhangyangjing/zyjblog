@@ -1,8 +1,27 @@
 {% extends "base.html" %}
 {% set title = title %}
+{% set main_class = "article" %}
+
+{% block head %}
+        <style>
+            .article {
+                text-align: center;
+            }
+
+            .article > ul {
+                width: 580px;
+                text-align: left;
+                font-size: 19px;
+                display: inline-block;
+                list-style-type: none;
+                border: 1px solid rgba(0, 0, 0, .13);
+                box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+            }
+        </style>
+{% endblock %}
 
 {% block content %}
-        <ul>
-            {{ article }}
-        </ul>
+            <ul>
+                {{ article }}
+            </ul>
 {% endblock %}
