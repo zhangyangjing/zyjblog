@@ -16,6 +16,7 @@ class ArticlesHandler(BaseHandler):
     def post(self):
         data = {'history': []}
         self._update_data(data, self.get_argument('markdown'))
+        self.db.articles.save(data)
         self.set_status(201)
         del data['history']
         self.finish(bson_2_json(data))
