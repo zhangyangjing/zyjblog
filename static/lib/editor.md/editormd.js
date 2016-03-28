@@ -616,7 +616,7 @@
                 mode                      : settings.mode,
                 theme                     : settings.theme,
                 tabSize                   : 4,
-                dragDrop                  : true,
+                dragDrop                  : false,
                 autofocus                 : true,
                 autoCloseTags             : settings.autoCloseTags,
                 readOnly                  : (settings.readOnly) ? "nocursor" : false,

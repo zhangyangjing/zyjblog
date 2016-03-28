@@ -12,6 +12,8 @@ def get(options):
         ('/about', 'controller.web.about.AboutHandler'),
         ('/login', 'controller.web.user.LoginHandler'),
         ('/logout', 'controller.web.user.LogoutHandler'),
+        ('/images', 'controller.web.images.ImagesHandler'),
+        ('/images/(.*)', 'controller.web.images.ImagesHandler'),
         ('/articles', 'controller.web.articles.ArticlesHandler'),
         ('/articles/new', 'controller.web.edit.EditHandler'),
         ('/articles/create', 'controller.web.edit.EditHandler'),

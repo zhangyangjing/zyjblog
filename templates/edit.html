@@ -2,100 +2,138 @@
 {% set title = "Edit" %}
 
 {% block head %}
-        <link rel="stylesheet" href="/static/lib/editor.md/css/editormd.min.css" />
+<link rel="stylesheet" href="/static/lib/editor.md/css/editormd.min.css" />
 {% endblock %}
 
 {% block content %}
 <div id="test-editormd" article_id="{{ article_id }}"></div>
-        <!--<script src="js/require.min.js"></script>-->
-        <script src="/static/js/jquery.min.js"></script>
-        <script src="/static/lib/editor.md/editormd.js"></script>
-        <script type="text/javascript">
-            var updating = false;
-            function updateMarkdown() {
-                if (updating)
-                    return;
-                updating = true;
+<!--<script src="js/require.min.js"></script>-->
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/lib/editor.md/editormd.js"></script>
+<script type="text/javascript">
+    var updating = false;
+    function updateMarkdown() {
+        if (updating)
+            return;
+        updating = true;
 
-                var markdown = editor.getMarkdown();
-                if (!markdown)
-                    return;
+        var markdown = editor.getMarkdown();
+        if (!markdown)
+            return;
+        var markdown_id = $("#test-editormd").attr("article_id");
+        if (!markdown_id)
+            postMarkdown(markdown);
+        else
+            putMarkdown(markdown_id, markdown);
+    }
+
+    function postMarkdown(md) {
+        console.log("postMarkdown");
+        $.ajax({
+            url: "/api/articles",
+            method: "POST",
+            data: {markdown: md},
+        }).done(function(data) {
+            $("#test-editormd").attr("article_id", data["_id"]);
+        }).fail(function() {
+            console.log("post fail");
+        }).always(function() {
+            updating = false;
+        });
+    }
+
+    function putMarkdown(mid, md) {
+        console.log("putMarkdown");
+        $.ajax({
+            url: "/api/articles/" + mid,
+            method: "PUT",
+            data: {markdown: md},
+        }).done(function(data) {
+
+        }).fail(function() {
+            console.log("put fail");
+        }).always(function() {
+            updating = false;
+        });
+    }
+
+    function fetchMarkdown(mid) {
+        $.get('/api/articles/' + mid, function(data) {
+            editor.setMarkdown(data["data"]);
+        }); 
+    }
+
+    function uploadImages(images) {
+        var formData = new FormData();
+        $.each(images, function(index, image) {
+            formData.append('file', image);
+        });
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/images');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                $.each(JSON.parse(xhr.response)['images'], function(index, name) {
+                    editor.cm.replaceSelection('![](/images/' + name + ')\n');
+                });
+            } else {
+                console.log('Something went terribly wrong...');
+            }
+        };
+        xhr.upload.onprogress = function (event) {
+            if (event.lengthComputable) {
+                var percent = (event.loaded / event.total * 100 | 0);
+            }
+        };
+        xhr.send(formData);
+    }
+
+    $(function() {
+        editor = editormd("test-editormd", {
+            width   : "90%",
+            height  : 640,
+            path    : "/static/lib/editor.md/lib/",
+            toolbar : false,
+            lineNumbers: false,
+            onload  : function() {
                 var markdown_id = $("#test-editormd").attr("article_id");
-                if (!markdown_id)
-                    postMarkdown(markdown);
-                else
-                    putMarkdown(markdown_id, markdown);
+                if (markdown_id) {
+                    fetchMarkdown(markdown_id);
+                }
+
             }
+        });
 
-            function postMarkdown(md) {
-                console.log("postMarkdown");
-                $.ajax({
-                    url: "/api/articles",
-                    method: "POST",
-                    data: {markdown: md},
-                }).done(function(data) {
-                    $("#test-editormd").attr("article_id", data["_id"]);
-                }).fail(function() {
-                    console.log("post fail");
-                }).always(function() {
-                    updating = false;
-                });
+        document.onkeydown = function(e) {
+            if ((e.metaKey || e.ctrlKey) && 83 == e.which) {
+                e.preventDefault();
+                updateMarkdown();
             }
+        };
 
-            function putMarkdown(mid, md) {
-                console.log("putMarkdown");
-                $.ajax({
-                    url: "/api/articles/" + mid,
-                    method: "PUT",
-                    data: {markdown: md},
-                }).done(function(data) {
-
-                }).fail(function() {
-                    console.log("put fail");
-                }).always(function() {
-                    updating = false;
-                });
-            }
-
-            function fetchMarkdown(mid) {
-                $.get('/api/articles/' + mid, function(data) {
-                    kk = data;
-                    console.log(data["data"]);
-                    console.log(data);
-                    console.log(data.data);
-                    editor.setMarkdown(data["data"]);
-                    //editor.setMarkdown("# sadf\nk;ksjd;;jsadk;s;dfkjsdf;\n;jkj;kjsd;j;as")
-                }); 
-            }
-
-            $(function() {
-                editor = editormd("test-editormd", {
-                    width   : "90%",
-                    height  : 640,
-                    path    : "/static/lib/editor.md/lib/",
-                    toolbar : false,
-                    lineNumbers: false,
-                    onload  : function() {
-                        this.cm.on("drop", function(data, e) {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            console.log("save file!");
-                            return false;
-                        });
-
-                        var markdown_id = $("#test-editormd").attr("article_id");
-                        if (markdown_id) {
-                            fetchMarkdown(markdown_id);
-                        }
-                    }
-                });
-                document.onkeydown = function(e) {
-                    if ((e.metaKey || e.ctrlKey) && 83 == e.which) {
-                        e.preventDefault();
-                        updateMarkdown();
-                    }
-                };
-                editor.fullscreen(); // bug
+        document.ondrop = function(e) {
+            var acceptedTypes = ['image/png','image/jpeg', 'image/gif'];
+            var uploadFile = false;
+            var images = [];
+            $.each(e.dataTransfer.files, function(index, file) {
+                if (-1 != $.inArray(file.type, acceptedTypes)) {
+                    uploadFile = true;
+                    images.push(file);
+                }
             });
-        </script>
+
+            if (uploadFile) {
+                uploadImages(images);
+            }
+
+            return false;
+        };
+
+        document.ondragover = function(event) {
+            return false;
+        };
+
+        editor.fullscreen(); // bug
+    });
+</script>
 {% endblock %}
