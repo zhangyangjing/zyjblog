@@ -8,6 +8,7 @@
 {% block content %}
 <div id="test-editormd" article_id="{{ article_id }}"></div>
 <!--<script src="js/require.min.js"></script>-->
+<script src="/static/js/dialog.js"></script>
 <script src="/static/js/jquery.min.js"></script>
 <script src="/static/lib/editor.md/editormd.js"></script>
 <script type="text/javascript">
@@ -28,31 +29,38 @@
     }
 
     function postMarkdown(md) {
-        console.log("postMarkdown");
+        var dialog = dialogs.showDialog('正在创建...');
         $.ajax({
             url: "/api/articles",
             method: "POST",
             data: {markdown: md},
         }).done(function(data) {
+            dialog.update("<nobr>创建成功</nobr>");
             $("#test-editormd").attr("article_id", data["_id"]);
         }).fail(function() {
-            console.log("post fail");
+            dialog.update("<nobr>创建失败</nobr>");
         }).always(function() {
+            setTimeout(function() {
+                dialog.dimission();
+            }, 800);
             updating = false;
         });
     }
 
     function putMarkdown(mid, md) {
-        console.log("putMarkdown");
+        var dialog = dialogs.showDialog('正在保存...');
         $.ajax({
             url: "/api/articles/" + mid,
             method: "PUT",
             data: {markdown: md},
         }).done(function(data) {
-
+            dialog.update("<nobr>保存成功</nobr>");
         }).fail(function() {
-            console.log("put fail");
+            dialog.update("<nobr>保存失败</nobr>");
         }).always(function() {
+            setTimeout(function() {
+                dialog.dimission();
+            }, 800);
             updating = false;
         });
     }
@@ -60,10 +68,11 @@
     function fetchMarkdown(mid) {
         $.get('/api/articles/' + mid, function(data) {
             editor.setMarkdown(data["data"]);
-        }); 
+        });
     }
 
     function uploadImages(images) {
+        var dialog = dialogs.showDialog('正在上传图片:');
         var formData = new FormData();
         $.each(images, function(index, image) {
             formData.append('file', image);
@@ -71,19 +80,26 @@
 
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/images');
+        xhr.upload.onprogress = function (event) {
+            if (event.lengthComputable) {
+                var percent = (event.loaded / event.total * 100 | 0);
+                dialog.update("<nobr>正在上传图片:" + percent + "%</nobr>");
+            }
+        };
         xhr.onload = function () {
             if (xhr.status === 200) {
+                dialog.update("<nobr>上传图片成功</nobr>");
                 $.each(JSON.parse(xhr.response)['images'], function(index, name) {
                     editor.cm.replaceSelection('![](/images/' + name + ')\n');
                 });
             } else {
+                dialog.update("<nobr>上传图片失败</nobr>");
                 console.log('Something went terribly wrong...');
             }
-        };
-        xhr.upload.onprogress = function (event) {
-            if (event.lengthComputable) {
-                var percent = (event.loaded / event.total * 100 | 0);
-            }
+
+            setTimeout(function() {
+                dialog.dimission();
+            }, 800);
         };
         xhr.send(formData);
     }
