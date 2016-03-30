@@ -23,6 +23,11 @@ class ArticlesHandler(BaseHandler):
 
     def put(self, article_id):
         data = self.db.articles.find_one({'_id': ObjectId(article_id)})
+        if data['data'] == self.get_argument('markdown'):
+            del data['history']
+            self.finish(bson_2_json(data))
+            return
+
         data['history'].append({
             'data': data['data'],
             'time': data['time'],
