@@ -4,10 +4,12 @@
         <meta charset="UTF-8">
         <meta name="author" content="Yangjing Zhang">
         <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=480, user-scalable=no" />
         <style>
             * {
                 margin: 0px;
                 padding: 0px;
+                box-sizing: border-box;
             }
 
             body {
@@ -76,6 +78,22 @@
                 margin: 80px 0 30px;
                 text-align: left;
                 display: inline-block;
+            }
+
+            @media only screen and (max-width: 700px) {
+                main {
+                    margin: 65px 0 20px;
+                }
+            }
+
+            @media only screen and (max-width: 500px) {
+                header h1 {
+                    margin-left: 10px
+                }
+
+                header nav {
+                    margin-right: 3px;
+                }
             }
         </style>
         {% block head %}
