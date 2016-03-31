@@ -3,6 +3,7 @@
 
 import os
 import hashlib
+import mimetypes
 from tornado.web import HTTPError
 from tornado.options import options
 from libs.handler import BaseHandler
@@ -17,6 +18,7 @@ class ImagesHandler(BaseHandler):
         if not os.path.exists(file_path):
             raise HTTPError(404)
         with open(file_path) as f:
+            self.set_header('Content-Type', self._get_content_type(file_path))
             self.finish(f.read())
 
     def post(self):
@@ -43,3 +45,14 @@ class ImagesHandler(BaseHandler):
         extension = file_info['content_type'].split('/')[1]
         extension = ('jpeg' == extension and ['jpg'] or [extension])[0]
         return '%s.%s' % (file_hash, extension)
+
+    def _get_content_type(self, file_path):
+        mime_type, encoding = mimetypes.guess_type(file_path)
+        if encoding == "gzip":
+            return 'application/gzip'
+        elif encoding is not None:
+            return 'application/octet-stream'
+        elif mime_type is not None:
+            return mime_type
+        else:
+            return 'application/octet-stream'
