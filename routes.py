@@ -10,6 +10,8 @@ def get(options):
         # page
         ('/', 'controller.web.articles.ArticlesHandler'),
         ('/about', 'controller.web.about.AboutHandler'),
+        ('/profile', 'controller.web.profile.ProfileHandler'),
+        ('/profile.pdf', 'controller.web.profile.ProfileHandler'),
         ('/login', 'controller.web.user.LoginHandler'),
         ('/logout', 'controller.web.user.LogoutHandler'),
         ('/images', 'controller.web.images.ImagesHandler'),
