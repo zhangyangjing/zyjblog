@@ -27,35 +27,13 @@
         if (!markdown)
             return;
         var markdown_id = $("#test-editormd").attr("article_id");
-        if (!markdown_id)
-            postMarkdown(markdown);
-        else
-            putMarkdown(markdown_id, markdown);
-    }
-
-    function postMarkdown(md) {
-        var dialog = dialogs.showDialog('正在创建...');
-        $.ajax({
-            url: "/api/articles",
-            method: "POST",
-            data: {markdown: md},
-        }).done(function(data) {
-            dialog.update("<nobr>创建成功</nobr>");
-            $("#test-editormd").attr("article_id", data["_id"]);
-        }).fail(function() {
-            dialog.update("<nobr>创建失败</nobr>");
-        }).always(function() {
-            setTimeout(function() {
-                dialog.dimission();
-            }, 800);
-            updating = false;
-        });
+        putMarkdown(markdown_id, markdown);
     }
 
     function putMarkdown(mid, md) {
         var dialog = dialogs.showDialog('正在保存...');
         $.ajax({
-            url: "/api/articles/" + mid,
+            url: "/articles/" + mid,
             method: "PUT",
             data: {markdown: md},
         }).done(function(data) {
@@ -72,7 +50,7 @@
 
     function fetchMarkdown(mid) {
         $.get('/api/articles/' + mid, function(data) {
-            editor.setMarkdown(data["data"]);
+            editor.setMarkdown(data["markdown"]);
         });
     }
 

@@ -7,24 +7,17 @@ def get(options):
     return [
         (r'/static/(.*)', StaticFileHandler, {'path': options.static_dir}),
 
-        # page
-        ('/', 'controller.web.articles.ArticlesHandler'),
-        ('/about', 'controller.web.about.AboutHandler'),
-        ('/profile', 'controller.web.profile.ProfileHandler'),
-        ('/profile.pdf', 'controller.web.profile.ProfileHandler'),
-        ('/login', 'controller.web.user.LoginHandler'),
-        ('/logout', 'controller.web.user.LogoutHandler'),
-        ('/images', 'controller.web.images.ImagesHandler'),
-        ('/images/(.*)', 'controller.web.images.ImagesHandler'),
-        ('/articles', 'controller.web.articles.ArticlesHandler'),
-        ('/articles/new', 'controller.web.edit.EditHandler'),
-        ('/articles/create', 'controller.web.edit.EditHandler'),
-        ('/articles/([0-9a-z]*)', 'controller.web.articles.ArticlesHandler'),
-        ('/articles/([0-9a-z]*)/edit', 'controller.web.edit.EditHandler'),
 
-        # service
+        ('/', 'controller.articles.ArticlesHandler'),
+        ('/articles', 'controller.articles.ArticlesHandler'),
+        ('/articles/([0-9a-z]*)', 'controller.articles.ArticlesHandler'),
 
-        # ajax
-        ('/api/articles', 'controller.ajax.articles.ArticlesHandler'),
-        ('/api/articles/(.*)', 'controller.ajax.articles.ArticlesHandler'),
+        ('/about', 'controller.about.AboutHandler'),
+        ('/profile', 'controller.profile.ProfileHandler'),
+        ('/profile.pdf', 'controller.profile.ProfileHandler'),
+        ('/login', 'controller.user.LoginHandler'),
+        ('/logout', 'controller.user.LogoutHandler'),
+
+        ('/images', 'controller.images.ImagesHandler'),
+        ('/images/(.*)', 'controller.images.ImagesHandler'),
     ]

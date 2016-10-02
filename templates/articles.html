@@ -9,16 +9,7 @@
                 max-width: 580px;
             }
 
-            .articles section {
-                width: 100%;
-            }
-
-            .articles a:link, .articles a:visited {
-                color: #4f8e45;
-                text-decoration: none;
-            }
-
-            .articles > ul {
+            .articles-list {
                 width: 100%;
                 text-align: left;
                 font-size: 19px;
@@ -28,42 +19,142 @@
                 box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
             }
 
-            .articles > ul > li {
+            .articles-list li {
                 display: flex;
+                max-height: 50px;
                 line-height: 38px;
                 padding: 0 15px;
                 border: 1px solid rgba(0, 0, 0, .13);
                 border-width: 0 0 1px;
             }
 
-            .articles > ul > li > a.title {
-                flex: auto;
+            .articles-item {
             }
 
-            .articles > ul > li > a.edit {
-                display: none;
+            .fade-out {
+                max-height: 0px !important;
+                transition: max-height 0.5s ease;
+                overflow: hidden;
             }
 
-            .articles > ul > li:hover {
+            .articles-item:hover {
                 background-color: #f3f3f3;
             }
 
-            .articles > ul > li:hover > a.edit {
+            .articles-item  a.title {
+                flex: auto;
+            }
+
+            .articles-item  a.admin{
+                display: none;
+                margin-left: 10px;
+            }
+
+            .articles-item a:link, .articles a:visited {
+                color: #4f8e45;
+                text-decoration: none;
+            }
+
+            .articles-item:hover  a.admin {
                 display: inline-flex;
             }
         </style>
+
+        <script>
+            function article_create() {
+                var form = document.createElement("form");
+                form.method = "post";
+                form.action = '/articles';
+                form.submit()
+            }
+
+            function article_edit(article_id) {
+                var form = document.createElement("form");
+                form.method = "post";
+                form.action = '/articles/' + article_id;
+                form.submit()
+            }
+
+            function article_delete(article_id) {
+                console.log('article_delete');
+                var req = new XMLHttpRequest();
+
+                function listener() {
+                    if (req.readyState==4) {
+                        if (req.status==200) {
+                            remove_article_item(article_id);
+                        } else {
+                            alert('删除失败');
+                        }
+                    }
+                    console.log('listener');
+                }
+
+                req.onload = listener;
+                req.open('delete', '/articles/' + article_id);
+                req.send();
+            }
+
+            function on_admin_node_click() {
+                var action = this.dataset.action;
+                var article_id = this.dataset.articleId;
+                console.log(action);
+                console.log(article_id);
+                switch (action) {
+                    case 'create':
+                        article_create();
+                        break;
+                    case 'edit':
+                        article_edit(article_id);
+                        break;
+                    case 'delete':
+                        article_delete(article_id);
+                        break;
+                }
+            }
+
+            function remove_article_item(article_id) {
+                var admin_nodes = document.querySelectorAll('.admin');
+                var admin_nodes_length = admin_nodes.length;
+                for (var i = 0; i < admin_nodes_length; i++) {
+                    var admin_node = admin_nodes[i];
+                    if (admin_node.dataset.articleId == article_id) {
+                        article_item = admin_node.parentNode;
+                        article_item.className += ' fade-out';
+                        article_item.addEventListener('webkitTransitionEnd', function() {
+                            article_item.remove();
+                        }, false);
+                    }
+                }
+            }
+
+            window.onload = function() {
+                var admin_nodes = document.querySelectorAll('.admin');
+                var admin_nodes_length = admin_nodes.length;
+                for (var i = 0; i < admin_nodes_length; i++) {
+                    admin_nodes[i].onclick=on_admin_node_click;
+                }
+            };
+        </script>
 {% endblock %}
 
 {% block content %}
             <section class="articles">
-                <ul>
+                <ul class="articles-list">
                 {% for article in articles %}
-                    <li><a href="/articles/{{ article._id }}" class="title">{{ article.title }}</a>
+                    <li class="articles-item">
+                        <a href="/articles/{{ article._id }}" class="title">{{ article.title }}</a>
                         {%- if admin -%}
-                            <a href="/articles/{{ article._id }}/edit" class="edit">edit</a>
+                            <a href='#' data-article-id='{{ article._id }}' data-action='edit' class="admin">edit</a>
+                            <a href='#' data-article-id='{{ article._id }}' data-action='delete' class="admin">delete</a>
                         {%- endif -%}
                     </li>
                 {% endfor %}
+                {%- if admin -%}
+                    <li>
+                        <a href='#' data-action='create' class='admin'>+++++++++++++++ New +++++++++++++++</a>
+                    </li>
+                {%- endif -%}
                 </ul>
             </section>
 {% endblock %}
