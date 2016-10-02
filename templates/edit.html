@@ -49,8 +49,13 @@
     }
 
     function fetchMarkdown(mid) {
-        $.get('/api/articles/' + mid, function(data) {
-            editor.setMarkdown(data["markdown"]);
+        $.ajax('/articles/' + mid, {
+            beforeSend: function(xhrObj){
+                xhrObj.setRequestHeader("Accept","application/json");
+            },
+            success: function(data) {
+                editor.setMarkdown(data["markdown"]);
+            }
         });
     }
 

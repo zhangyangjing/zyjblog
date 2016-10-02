@@ -4,8 +4,9 @@ import pymongo
 from datetime import datetime
 from bson.objectid import ObjectId
 from tornado.options import options
-from libs.handler import BaseHandler
 from tornado.web import authenticated
+from libs.handler import BaseHandler
+from libs.json_helper import bson_2_json
 
 
 class ArticlesHandler(BaseHandler):
@@ -53,9 +54,13 @@ class ArticlesHandler(BaseHandler):
     def _get_special(self, article_id):
         article = self.db.articles.find_one({'_id': ObjectId(article_id)},
                                             {'markdown': 1, 'title': 1})
-        self.render('article.html',
-                    title=article['title'],
-                    article=self.md.convert(article['markdown']))
+        accept = self.request.headers.get('Accept', 'html')
+        if accept.find('json') > -1:
+            self.finish(bson_2_json(article))
+        else:
+            self.render('article.html',
+                        title=article['title'],
+                        article=self.md.convert(article['markdown']))
 
     def _get_all(self):
         articles = self.db.articles.find({}, {'_id': 1, 'title': 1})
